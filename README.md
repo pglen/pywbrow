@@ -1,2 +1,2 @@
-# pywbrow
-Simple webkit enabled browser
+# pytemplate
+template for gui-s
