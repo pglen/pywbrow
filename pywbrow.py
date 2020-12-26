@@ -56,15 +56,12 @@ if __name__ == '__main__':
 
     global mw
     args = conf.comline(sys.argv[1:])
-
-    if conf.kiosk:
-        print("Kiosk Mode")
-
-    mw = MainWin(conf)
+    #print(args)
+    #if conf.kiosk:
+    #    print("Kiosk Mode")
+    mw = MainWin(conf, args)
     Gtk.main()
     sys.exit(0)
-
-
 
 
 

@@ -38,16 +38,18 @@ class pgwebw(WebKit2.WebView):
     def do_load_changed(self, status):
 
         #print("do_load_changed() was called", status)
-        self.xlink.status.set_text("Loading ... " + self.get_uri()[:64])
+        if self.get_uri():
+            self.xlink.status.set_text("Loading ... " + self.get_uri()[:64])
 
         if status == 3: #WebKit2.LoadEvent.WEBKIT_LOAD_FINISHED:
             #print("got WEBKIT_LOAD_FINISHED")
-            self.xlink.edit.set_text(self.get_uri()[:64])
-            self.xlink.status.set_text("Finished: " + self.get_uri()[:64])
+            if self.get_uri():
+                self.xlink.edit.set_text(self.get_uri()[:64])
+                self.xlink.status.set_text("Finished: " + self.get_uri()[:64])
             self.grab_focus()
 
     def do_load_failed(self, load_event, failing_uri, error):
         print("do_load_failed() was called", failing_uri)
-        self.xlink.status.set_text("Failed: " + self.get_uri()[:64])
+        self.xlink.status.set_text("Failed: " + failing_uri[:64])
 
 # EOF

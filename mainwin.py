@@ -30,7 +30,7 @@ import pgwkit
 
 class MainWin(Gtk.Window):
 
-    def __init__(self, conf):
+    def __init__(self, conf, args):
 
         Gtk.Window.__init__(self, Gtk.WindowType.TOPLEVEL)
         #self = Gtk.Window(Gtk.WindowType.TOPLEVEL)
@@ -113,7 +113,10 @@ class MainWin(Gtk.Window):
         self.edit.setsavecb(self.url_callb)
         self.edit.single_line = True
 
-        hbox3.pack_start(Gtk.Label(" Goto URL: "), 0, 0, 0)
+        uuu  = Gtk.Label("  URL:  ")
+        uuu.set_tooltip_text("Current / New URL; press Enter to go")
+        hbox3.pack_start(uuu, 0, 0, 0)
+
         hbox3.pack_start(self.edit, True, True, 2)
 
         bbb = LabelButt(" Go ", self.gourl, "Go to speified URL")
@@ -139,7 +142,10 @@ class MainWin(Gtk.Window):
 
         #webview.load_uri("https://google.com")
         #self.webview.load_uri("file://" + self.fname)
-        self.baseurl(None, None, None)
+        if not args:
+            self.baseurl(None, None, None)
+        else:
+            self.go(args[0])
 
         browse_win.add(self.webview)
         vbox.pack_start(browse_win, 1, 1, 2)
@@ -156,7 +162,7 @@ class MainWin(Gtk.Window):
         #vbox.pack_start(hbox4, False, 0, 6)
 
         hbox5 = Gtk.HBox()
-        hbox5.pack_start(Gtk.Label("  Status:  "), 0, 0, 0)
+        hbox5.pack_start(Gtk.Label("  "), 0, 0, 0)
         self.status = Gtk.Label(" Idle ");
         self.status.set_xalign(0)
         hbox5.pack_start(self.status, 1, 1, 0)
@@ -171,7 +177,7 @@ class MainWin(Gtk.Window):
         self.add(vbox)
         self.show_all()
 
-        self.set_status(" Idle State")
+        self.set_status(" Idle State ")
 
         #print(WebKit2.WebView.__dict__)
         #print(dir(self.webview))
@@ -194,6 +200,8 @@ class MainWin(Gtk.Window):
 
         #  Leave known URL scemes alone
         if xstr[:7] == "file://":
+            sss = os.path.realpath(xstr[7:])
+            xstr = "file://" + sss
             pass
         elif xstr[:7] == "http://":
             pass
