@@ -2,6 +2,8 @@
 
 import os, sys, getopt, signal, random, time, warnings
 
+import inspect
+
 from pymenu import  *
 from pgui import *
 
@@ -9,6 +11,7 @@ sys.path.append('../pycommon')
 
 from pgutils import  *
 from pggui import  *
+from pgsimp import  *
 
 import gi
 gi.require_version("Gtk", "3.0")
@@ -21,11 +24,13 @@ from gi.repository import GObject
 from gi.repository import Pango
 from gi.repository import WebKit2
 
+import pgwkit
+
 # ------------------------------------------------------------------------
 
 class MainWin(Gtk.Window):
 
-    def __init__(self):
+    def __init__(self, conf):
 
         Gtk.Window.__init__(self, Gtk.WindowType.TOPLEVEL)
         #self = Gtk.Window(Gtk.WindowType.TOPLEVEL)
@@ -36,6 +41,7 @@ class MainWin(Gtk.Window):
         #ic = Gtk.Image(); ic.set_from_stock(Gtk.STOCK_DIALOG_INFO, Gtk.ICON_SIZE_BUTTON)
         #window.set_icon(ic.get_pixbuf())
 
+        self.fname = os.path.dirname(__file__) + os.sep + "home.html"
         www = Gdk.Screen.width(); hhh = Gdk.Screen.height();
 
         disp2 = Gdk.Display()
@@ -60,6 +66,7 @@ class MainWin(Gtk.Window):
         self.connect("destroy", self.OnExit)
         self.connect("key-press-event", self.key_press_event)
         self.connect("button-press-event", self.button_press_event)
+        #self.connect("button-press-event", self.motion)
 
         iconfile = os.path.dirname(__file__) + os.sep + "assets" + os.sep + "browser.png"
         try:
@@ -69,7 +76,6 @@ class MainWin(Gtk.Window):
             pass
 
         vbox = Gtk.VBox();
-
         merge = Gtk.UIManager()
         #self.mywin.set_data("ui-manager", merge)
 
@@ -94,7 +100,8 @@ class MainWin(Gtk.Window):
         bbox.pack_start(self.mbar, 0,0, 0)
         bbox.pack_start(self.tbar, 0,0, 0)
 
-        vbox.pack_start(bbox, False, 0, 0)
+        if not conf.kiosk:
+            vbox.pack_start(bbox, False, 0, 0)
 
         #hbox2 = Gtk.HBox()
         #lab3 = Gtk.Label("");  hbox2.pack_start(lab3, 0, 0, 0)
@@ -103,54 +110,120 @@ class MainWin(Gtk.Window):
 
         hbox3 = Gtk.HBox()
         self.edit = SimpleEdit();
+        self.edit.setsavecb(self.url_callb)
+        self.edit.single_line = True
+
         hbox3.pack_start(Gtk.Label(" Goto URL: "), 0, 0, 0)
         hbox3.pack_start(self.edit, True, True, 2)
 
         bbb = LabelButt(" Go ", self.gourl, "Go to speified URL")
-
-        hbox3.pack_start(bbb, 0, 0, 0)
+        ccc = LabelButt(" <-Back  ", self.backurl, "Go Back")
+        ddd = LabelButt("  Forw-> ", self.forwurl, "Go Forw")
+        eee = LabelButt("   Base  ", self.baseurl, "Go to base URL")
 
         hbox3.pack_start(Gtk.Label("  "), 0, 0, 0)
-        hbox3.pack_start(Gtk.Label(" <-Back  "), 0, 0, 0)
-        hbox3.pack_start(Gtk.Label("  Forw-> "), 0, 0, 0)
-        hbox3.pack_start(Gtk.Label("  Begin  "), 0, 0, 0)
+
+        hbox3.pack_start(bbb, 0, 0, 0)
+        hbox3.pack_start(ccc, 0, 0, 0)
+        hbox3.pack_start(ddd, 0, 0, 0)
+        hbox3.pack_start(eee, 0, 0, 0)
+
         hbox3.pack_start(Gtk.Label("  ^  "), 0, 0, 0)
         hbox3.pack_start(Gtk.Label(" "), 0, 0, 0)
 
-        vbox.pack_start(hbox3, False, False, 2)
+        if not conf.kiosk:
+            vbox.pack_start(hbox3, False, False, 2)
 
         browse_win = Gtk.ScrolledWindow()
-        self.webview = WebKit2.WebView()
+        self.webview = pgwkit.pgwebw(self)
 
         #webview.load_uri("https://google.com")
-        fname = os.path.dirname(__file__) + os.sep + "home.html"
-        self.webview.load_uri("file://" + fname)
+        #self.webview.load_uri("file://" + self.fname)
+        self.baseurl(None, None, None)
 
         browse_win.add(self.webview)
         vbox.pack_start(browse_win, 1, 1, 2)
 
-        hbox4 = Gtk.HBox()
-        lab1 = Gtk.Label("");  hbox4.pack_start(lab1, 1, 1, 0)
-        lab2 = Gtk.Label("  ");  hbox4.pack_start(lab2, 0, 0, 0)
-        butt1 = Gtk.Button.new_with_mnemonic(" _New ")
-        #butt1.connect("clicked", self.show_new, window)
-        hbox4.pack_start(butt1, False, 0, 2)
+        #hbox4 = Gtk.HBox()
+        #lab1 = Gtk.Label("");  hbox4.pack_start(lab1, 1, 1, 0)
+        #lab2 = Gtk.Label("  ");  hbox4.pack_start(lab2, 0, 0, 0)
+        #butt1 = Gtk.Button.new_with_mnemonic(" _New ")
+        ##butt1.connect("clicked", self.show_new, window)
+        #hbox4.pack_start(butt1, False, 0, 2)
+        #butt2 = Gtk.Button.new_with_mnemonic(" E_xit ")
+        #butt2.connect("clicked", self.OnExit, self)
+        #hbox4.pack_start(butt2, False, 0, 0)
+        #vbox.pack_start(hbox4, False, 0, 6)
 
-        butt2 = Gtk.Button.new_with_mnemonic(" E_xit ")
-        butt2.connect("clicked", self.OnExit, self)
-        hbox4.pack_start(butt2, False, 0, 0)
+        hbox5 = Gtk.HBox()
+        hbox5.pack_start(Gtk.Label("  Status:  "), 0, 0, 0)
+        self.status = Gtk.Label(" Idle ");
+        self.status.set_xalign(0)
+        hbox5.pack_start(self.status, 1, 1, 0)
+        hbox5.pack_start(Gtk.Label("  "), 0, 0, 0)
 
-        vbox.pack_start(hbox4, False, 0, 6)
+        if not conf.kiosk:
+            vbox.pack_start(hbox5, False, 0, 6)
+
+        if conf.kiosk:
+            self.fullscreen()
 
         self.add(vbox)
         self.show_all()
 
+        self.set_status(" Idle State")
+
+        #print(WebKit2.WebView.__dict__)
+        #print(dir(self.webview))
+        #print(self.webview.__dict__)
+        print("ver", WebKit2.get_major_version(), WebKit2.get_minor_version())
+
+        # Original
+        "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0 Safari/605.1.15"
+
+        settings = self.webview.get_settings()
+        #print(dir(settings))
+        #settings.set_user_agent("Mozilla/5.0 (X11; Linux x86_64; rv:10.0) Gecko/20100101 Firefox/10.0")
+        print(settings.get_user_agent())
+
+    def set_status(self, xtxt):
+        self.status.set_text(xtxt)
+
+    def go(self, xstr):
+        print("go", xstr)
+
+        #  Leave known URL scemes alone
+        if xstr[:7] == "file://":
+            pass
+        elif xstr[:7] == "http://":
+            pass
+        elif xstr[:8] == "https://":
+            pass
+        elif xstr[:6] == "ftp://":
+            pass
+        elif str.isdecimal(xstr[0]):
+            #print("Possible IP")
+            pass
+        else:
+            # Yeah, padd it
+            xstr = "https://" + xstr
+
+        self.webview.load_uri(xstr)
+
+    def url_callb(self, xtxt):
+        self.go(xtxt)
+
+    def backurl(self, url, parm, buff):
+        self.webview.go_back()
+
+    def baseurl(self, url, parm, buff):
+        self.webview.load_uri("file://" + self.fname)
+
+    def forwurl(self, url, parm, buff):
+        self.webview.go_forward()
+
     def gourl(self, url, parm, buff):
-        print("go", url, parm, self.edit.get_buffer())
-        buff = self.edit.get_buffer()
-        ttt = buff.get_text(buff.get_start_iter(), buff.get_end_iter(), False)
-        print("ttt", ttt)
-        self.webview.load_uri(ttt)
+        self.go(self.edit.get_text())
 
     def  OnExit(self, arg, srg2 = None):
         self.exit_all()
@@ -194,7 +267,6 @@ class MainWin(Gtk.Window):
         pass
 
 
-
 # Start of program:
 
 if __name__ == '__main__':
@@ -203,8 +275,3 @@ if __name__ == '__main__':
     Gtk.main()
 
 # EOF
-
-
-
-
-

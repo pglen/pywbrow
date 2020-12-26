@@ -27,6 +27,7 @@ def phelp():
     print( "Options:    -d level  - Debug level 0-10")
     print( "            -p        - Port to use (default: 9999)")
     print( "            -v        - Verbose")
+    print( "            -k        - Kiosk")
     print( "            -V        - Version")
     print( "            -q        - Quiet")
     print( "            -h        - Help")
@@ -45,6 +46,7 @@ optarr = \
     ["v",   "verbose",  0,      None],      \
     ["q",   "quiet",    0,      None],      \
     ["t",   "test",     "x",    None],      \
+    ["k",   "kiosk",    0,      None],      \
     ["V",   None,       None,   pversion],  \
     ["h",   None,       None,   phelp]      \
 
@@ -55,7 +57,10 @@ if __name__ == '__main__':
     global mw
     args = conf.comline(sys.argv[1:])
 
-    mw = MainWin()
+    if conf.kiosk:
+        print("Kiosk Mode")
+
+    mw = MainWin(conf)
     Gtk.main()
     sys.exit(0)
 
