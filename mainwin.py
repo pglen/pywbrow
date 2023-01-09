@@ -7,7 +7,8 @@ import inspect
 from pymenu import  *
 from pgui import *
 
-sys.path.append('../pycommon')
+realinc = os.path.realpath(os.path.dirname(__file__) + os.sep + "../pycommon")
+sys.path.append(realinc)
 
 from pgutils import  *
 from pggui import  *
@@ -22,9 +23,15 @@ from gi.repository import Gdk
 from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Pango
-from gi.repository import WebKit2
 
-import pgwkit
+try:
+    import pgwkit
+except:
+    print("Please install WebKit2", __file__, __line__)
+    #sys.exit(1)
+
+def func():
+    pass
 
 # ------------------------------------------------------------------------
 
@@ -90,13 +97,14 @@ class MainWin(Gtk.Window):
         except GLib.GError as msg:
             print("Building menus failed: %s" % msg)
 
+
+        bbox = Gtk.VBox()
         self.mbar = merge.get_widget("/MenuBar")
         self.mbar.show()
 
         self.tbar = merge.get_widget("/ToolBar");
         self.tbar.show()
 
-        bbox = Gtk.VBox()
         bbox.pack_start(self.mbar, 0,0, 0)
         bbox.pack_start(self.tbar, 0,0, 0)
 
@@ -108,47 +116,27 @@ class MainWin(Gtk.Window):
         #lab4 = Gtk.Label("");  hbox2.pack_start(lab4, 0, 0, 0)
         #vbox.pack_start(hbox2, False, 0, 0)
 
-        hbox3 = Gtk.HBox()
-        self.edit = SimpleEdit();
-        self.edit.setsavecb(self.url_callb)
-        self.edit.single_line = True
+        #urlbar = self.create_urlbar()
+        #if not conf.kiosk:
+        #    vbox.pack_start(urlbar, False, False, 2)
 
-        uuu  = Gtk.Label("  URL:  ")
-        uuu.set_tooltip_text("Current / New URL; press Enter to go")
-        hbox3.pack_start(uuu, 0, 0, 0)
+        self.notebook_1 =  Gtk.Notebook.new();
+        #notebook.size_allocate(Gdk.Rectangle(0, 0, 10,10))
+        #notebook.popup_enable()
+        self.notebook_1.set_scrollable(True)
 
-        hbox3.pack_start(self.edit, True, True, 2)
-
-        bbb = LabelButt(" Go ", self.gourl, "Go to speified URL")
-        ccc = LabelButt(" <-Back  ", self.backurl, "Go Back")
-        ddd = LabelButt("  Forw-> ", self.forwurl, "Go Forw")
-        eee = LabelButt("   Base  ", self.baseurl, "Go to base URL")
-
-        hbox3.pack_start(Gtk.Label("  "), 0, 0, 0)
-
-        hbox3.pack_start(bbb, 0, 0, 0)
-        hbox3.pack_start(ccc, 0, 0, 0)
-        hbox3.pack_start(ddd, 0, 0, 0)
-        hbox3.pack_start(eee, 0, 0, 0)
-
-        hbox3.pack_start(Gtk.Label("  ^  "), 0, 0, 0)
-        hbox3.pack_start(Gtk.Label(" "), 0, 0, 0)
-
-        if not conf.kiosk:
-            vbox.pack_start(hbox3, False, False, 2)
-
-        browse_win = Gtk.ScrolledWindow()
-        self.webview = pgwkit.pgwebw(self)
+        self.notebook_1.append_page(self.create_browwin(), self.makelabel("test"))
+        self.notebook_1.append_page(self.create_browwin())
 
         #webview.load_uri("https://google.com")
         #self.webview.load_uri("file://" + self.fname)
-        if not args:
-            self.baseurl(None, None, None)
-        else:
-            self.go(args[0])
+        #if not args:
+        #    self.baseurl(None, None, None)
+        #else:
+        #    self.go(args[0])
 
-        browse_win.add(self.webview)
-        vbox.pack_start(browse_win, 1, 1, 2)
+        #browse_win.add(self.notebook_1)
+        vbox.pack_start(self.notebook_1, 1, 1, 2)
 
         #hbox4 = Gtk.HBox()
         #lab1 = Gtk.Label("");  hbox4.pack_start(lab1, 1, 1, 0)
@@ -179,59 +167,116 @@ class MainWin(Gtk.Window):
 
         self.set_status(" Idle State ")
 
-        #print(WebKit2.WebView.__dict__)
         #print(dir(self.webview))
         #print(self.webview.__dict__)
-        print("ver", WebKit2.get_major_version(), WebKit2.get_minor_version())
 
         # Original
         "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0 Safari/605.1.15"
 
         settings = self.webview.get_settings()
-        #print(dir(settings))
-        #settings.set_user_agent("Mozilla/5.0 (X11; Linux x86_64; rv:10.0) Gecko/20100101 Firefox/10.0")
-        print(settings.get_user_agent())
+
+        settings.set_enable_encrypted_media(True)
+        settings.set_enable_developer_extras(True)
+        settings.set_user_agent("Mozilla/5.0 (X11; Linux x86_64; rv:20.0) Gecko/20100101 Firefox/91.0")
+
+        print("User Agent", settings.get_user_agent())
+
+        self.webview.set_editable(True)
+        #self.webview.get_settings().set_property("enable_developer_extras", True)
+
+        #for aa in dir(settings):
+        #    ppp = ""
+        #    if "get" in aa:
+        #        try:
+        #            zzz = getattr(settings, aa)
+        #            if type(zzz) == "str":
+        #                ppp = zzz
+        #            else:
+        #                ppp = zzz()
+        #        except:
+        #             ppp = "No Prop"
+        #        print(aa, "=", ppp)
+
+        '''
+        warnings.simplefilter("ignore")
+        for aa in dir(settings):
+            ppp = ""
+            if "list_properties" in aa:
+                continue;
+            if "__" in aa:
+                continue;
+            try:
+                zzz = getattr(settings, aa)
+                if type(zzz) == "str":
+                    ppp = zzz
+                else:
+                    ppp = zzz()
+            except:
+                 ppp = "No Propx"
+
+            print(aa, "=", ppp)
+        warnings.simplefilter("default")
+        '''
+
+        #print(settings.get_properties())
+
+        self.webview.editor = self.webview
+        self.ui = pgwkit.generate_ui(self.webview)
+
+        self.add_accel_group(self.ui.get_accel_group())
+        #self.toolbar1 = self.ui.get_widget("/toolbar_main")
+        #self.menubar = self.ui.get_widget("/menubar_main")
+        #bbox.pack_start(self.menubar, False, False, 0)
+        #bbox.pack_start(self.toolbar1, False, False, 0)
+        #bbox.pack_start(self.toolbar2, False, False, 0)
+
+
+    def makelabel(self, labstr, callb = None):
+
+        label = Gtk.Label.new(labstr)
+        label.set_tooltip_text(labstr)
+        label.set_single_line_mode(True)
+
+        eb = Gtk.EventBox(); eb.add(label)
+        if callb:
+            eb.connect_after("button-press-event", Gtk)
+
+        eb.set_above_child(True)
+
+        image = Gtk.Image()
+        image.set_from_stock(Gtk.STOCK_CLOSE, Gtk.IconSize.MENU)
+        butt = Gtk.Button();  butt.add(image)
+        butt.set_focus_on_click(False)
+        butt.set_relief( Gtk.ReliefStyle.NONE)
+
+        #butt.connect("clicked", self.close_button)
+        butt.set_tooltip_text("Close '%s'" % os.path.basename(self.fname))
+        hbox = Gtk.HBox()
+        hbox.pack_start(eb, 0, 0, 0)
+        hbox.pack_start(butt, 0, 0, 0)
+        hbox.show_all()
+        return hbox
+
+    def create_browwin(self):
+
+        try:
+            #self.webview = pgwkit.pgwebw(self)
+            self.hedit = pgwkit.HtmlEdit(True, self.set_status)
+            self.webview =  self.hedit._htmlx
+
+        except:
+            print(sys.exc_info())
+            print("Please install webkit2")
+            put_exception("window cration")
+
+            sys.exit(1)
+            #self.webview = pgwkit.pgwebw_fake()
+
+        return self.hedit
+
 
     def set_status(self, xtxt):
         self.status.set_text(xtxt)
-
-    def go(self, xstr):
-        print("go", xstr)
-
-        #  Leave known URL scemes alone
-        if xstr[:7] == "file://":
-            sss = os.path.realpath(xstr[7:])
-            xstr = "file://" + sss
-            pass
-        elif xstr[:7] == "http://":
-            pass
-        elif xstr[:8] == "https://":
-            pass
-        elif xstr[:6] == "ftp://":
-            pass
-        elif str.isdecimal(xstr[0]):
-            #print("Possible IP")
-            pass
-        else:
-            # Yeah, padd it
-            xstr = "https://" + xstr
-
-        self.webview.load_uri(xstr)
-
-    def url_callb(self, xtxt):
-        self.go(xtxt)
-
-    def backurl(self, url, parm, buff):
-        self.webview.go_back()
-
-    def baseurl(self, url, parm, buff):
-        self.webview.load_uri("file://" + self.fname)
-
-    def forwurl(self, url, parm, buff):
-        self.webview.go_forward()
-
-    def gourl(self, url, parm, buff):
-        self.go(self.edit.get_text())
 
     def  OnExit(self, arg, srg2 = None):
         self.exit_all()
@@ -256,11 +301,17 @@ class MainWin(Gtk.Window):
         #dialog.connect ("response", lambda d, r: d.destroy())
         #dialog.show()
 
-        warnings.simplefilter("ignore")
+        #warnings.simplefilter("ignore")
         strx = action.get_name()
-        warnings.simplefilter("default")
+        #warnings.simplefilter("default")
 
-        print ("activate_action", strx)
+        print ("activate_action:", strx)
+
+        if str == "Copy":
+            print("copy")
+
+        if str == "Save":
+            print("save")
 
     def activate_quit(self, action):
         print( "activate_quit called")
@@ -279,7 +330,8 @@ class MainWin(Gtk.Window):
 
 if __name__ == '__main__':
 
-    mainwin = MainWin()
-    Gtk.main()
+    #mainwin = MainWin()
+    #Gtk.main()
+    pass
 
 # EOF
