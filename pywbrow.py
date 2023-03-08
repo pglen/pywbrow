@@ -11,7 +11,6 @@ from mainwin import  *
 sys.path.append('../common')
 from pgutils import  *
 
-
 # ------------------------------------------------------------------------
 # Globals
 
@@ -62,12 +61,3 @@ if __name__ == '__main__':
     mw = MainWin(conf, args)
     Gtk.main()
     sys.exit(0)
-
-
-
-
-
-
-
-
-

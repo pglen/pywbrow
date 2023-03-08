@@ -7,7 +7,8 @@ import inspect
 from pymenu import  *
 from pgui import *
 
-sys.path.append('../pycommon')
+realinc = os.path.realpath(os.path.dirname(__file__) + os.sep + "../pycommon")
+sys.path.append(realinc)
 
 from pgutils import  *
 from pggui import  *
@@ -22,10 +23,18 @@ from gi.repository import Gdk
 from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Pango
-from gi.repository import WebKit2
 
-import pgwkit
+import browsewin
 
+#try:
+#    import pgwkit
+#except:
+#    print("Please install WebKit2")
+#    sys.exit(1)
+#
+#def func():
+#    pass
+#
 # ------------------------------------------------------------------------
 
 class MainWin(Gtk.Window):
@@ -41,7 +50,6 @@ class MainWin(Gtk.Window):
         #ic = Gtk.Image(); ic.set_from_stock(Gtk.STOCK_DIALOG_INFO, Gtk.ICON_SIZE_BUTTON)
         #window.set_icon(ic.get_pixbuf())
 
-        self.fname = os.path.dirname(__file__) + os.sep + "home.html"
         www = Gdk.Screen.width(); hhh = Gdk.Screen.height();
 
         disp2 = Gdk.Display()
@@ -108,47 +116,21 @@ class MainWin(Gtk.Window):
         #lab4 = Gtk.Label("");  hbox2.pack_start(lab4, 0, 0, 0)
         #vbox.pack_start(hbox2, False, 0, 0)
 
-        hbox3 = Gtk.HBox()
-        self.edit = SimpleEdit();
-        self.edit.setsavecb(self.url_callb)
-        self.edit.single_line = True
+        self.brow_win = browsewin.brow_win()
+        self.brow_win.fname = os.path.dirname(__file__) + os.sep + "home.html"
 
-        uuu  = Gtk.Label("  URL:  ")
-        uuu.set_tooltip_text("Current / New URL; press Enter to go")
-        hbox3.pack_start(uuu, 0, 0, 0)
-
-        hbox3.pack_start(self.edit, True, True, 2)
-
-        bbb = LabelButt(" Go ", self.gourl, "Go to speified URL")
-        ccc = LabelButt(" <-Back  ", self.backurl, "Go Back")
-        ddd = LabelButt("  Forw-> ", self.forwurl, "Go Forw")
-        eee = LabelButt("   Base  ", self.baseurl, "Go to base URL")
-
-        hbox3.pack_start(Gtk.Label("  "), 0, 0, 0)
-
-        hbox3.pack_start(bbb, 0, 0, 0)
-        hbox3.pack_start(ccc, 0, 0, 0)
-        hbox3.pack_start(ddd, 0, 0, 0)
-        hbox3.pack_start(eee, 0, 0, 0)
-
-        hbox3.pack_start(Gtk.Label("  ^  "), 0, 0, 0)
-        hbox3.pack_start(Gtk.Label(" "), 0, 0, 0)
-
-        if not conf.kiosk:
-            vbox.pack_start(hbox3, False, False, 2)
-
-        browse_win = Gtk.ScrolledWindow()
-        self.webview = pgwkit.pgwebw(self)
+        #self.brow_win = htmledit.HtmlEditor()
 
         #webview.load_uri("https://google.com")
-        #self.webview.load_uri("file://" + self.fname)
-        if not args:
-            self.baseurl(None, None, None)
-        else:
-            self.go(args[0])
+        #self.brow_win.webview.load_uri("file://" + self.fname)
 
-        browse_win.add(self.webview)
-        vbox.pack_start(browse_win, 1, 1, 2)
+        if not args:
+            self.brow_win.baseurl(None, None, None)
+        else:
+            self.brow_win.go(args[0])
+
+        #brow_win.add(self.brow_win.webview)
+        vbox.pack_start(self.brow_win, 1, 1, 2)
 
         #hbox4 = Gtk.HBox()
         #lab1 = Gtk.Label("");  hbox4.pack_start(lab1, 1, 1, 0)
@@ -161,77 +143,42 @@ class MainWin(Gtk.Window):
         #hbox4.pack_start(butt2, False, 0, 0)
         #vbox.pack_start(hbox4, False, 0, 6)
 
-        hbox5 = Gtk.HBox()
-        hbox5.pack_start(Gtk.Label("  "), 0, 0, 0)
-        self.status = Gtk.Label(" Idle ");
-        self.status.set_xalign(0)
-        hbox5.pack_start(self.status, 1, 1, 0)
-        hbox5.pack_start(Gtk.Label("  "), 0, 0, 0)
-
-        if not conf.kiosk:
-            vbox.pack_start(hbox5, False, 0, 6)
-
         if conf.kiosk:
             self.fullscreen()
 
         self.add(vbox)
         self.show_all()
 
-        self.set_status(" Idle State ")
-
-        #print(WebKit2.WebView.__dict__)
-        #print(dir(self.webview))
-        #print(self.webview.__dict__)
-        print("ver", WebKit2.get_major_version(), WebKit2.get_minor_version())
+        #print(dir(self.brow_win.webview))
+        #print(self.brow_win.webview.__dict__)
 
         # Original
         "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0 Safari/605.1.15"
 
-        settings = self.webview.get_settings()
-        #print(dir(settings))
-        #settings.set_user_agent("Mozilla/5.0 (X11; Linux x86_64; rv:10.0) Gecko/20100101 Firefox/10.0")
-        print(settings.get_user_agent())
+        #settings = self.brow_win.webview.get_settings()
+        #
+        #settings.set_enable_encrypted_media(True)
+        #settings.set_enable_developer_extras(True)
+        #settings.set_user_agent("Mozilla/5.0 (X11; Linux x86_64; rv:20.0) Gecko/20100101 Firefox/91.0")
+        #print("User Agent", settings.get_user_agent())
 
-    def set_status(self, xtxt):
-        self.status.set_text(xtxt)
+        #self.brow_win.webview.set_editable(True)
+        #self.brow_win.webview.get_settings().set_property("enable_developer_extras", True)
 
-    def go(self, xstr):
-        print("go", xstr)
+        #for aa in dir(settings):
+        #    ppp = ""
+        #    if "get" in aa:
+        #        try:
+        #            zzz = getattr(settings, aa)
+        #            if type(zzz) == "str":
+        #                ppp = zzz
+        #            else:
+        #                ppp = zzz()
+        #        except:
+        #             ppp = "No Prop"
+        #        print(aa, "=", ppp)
 
-        #  Leave known URL scemes alone
-        if xstr[:7] == "file://":
-            sss = os.path.realpath(xstr[7:])
-            xstr = "file://" + sss
-            pass
-        elif xstr[:7] == "http://":
-            pass
-        elif xstr[:8] == "https://":
-            pass
-        elif xstr[:6] == "ftp://":
-            pass
-        elif str.isdecimal(xstr[0]):
-            #print("Possible IP")
-            pass
-        else:
-            # Yeah, padd it
-            xstr = "https://" + xstr
-
-        self.webview.load_uri(xstr)
-
-    def url_callb(self, xtxt):
-        self.go(xtxt)
-
-    def backurl(self, url, parm, buff):
-        self.webview.go_back()
-
-    def baseurl(self, url, parm, buff):
-        self.webview.load_uri("file://" + self.fname)
-
-    def forwurl(self, url, parm, buff):
-        self.webview.go_forward()
-
-    def gourl(self, url, parm, buff):
-        self.go(self.edit.get_text())
+        #print(settings.get_properties())
 
     def  OnExit(self, arg, srg2 = None):
         self.exit_all()
@@ -279,7 +226,8 @@ class MainWin(Gtk.Window):
 
 if __name__ == '__main__':
 
-    mainwin = MainWin()
-    Gtk.main()
+    #mainwin = MainWin()
+    #Gtk.main()
+    pass
 
 # EOF
