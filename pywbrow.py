@@ -8,6 +8,8 @@ import random, stat
 
 from mainwin import  *
 
+import pgwkit
+
 sys.path.append('../common')
 from pgutils import  *
 
@@ -58,6 +60,11 @@ if __name__ == '__main__':
     #print(args)
     #if conf.kiosk:
     #    print("Kiosk Mode")
+
+    #if not pgwkit.present:
+    #    print("Please install webkit2 first")
+    #    sys.exit(0)
+
     mw = MainWin(conf, args)
     Gtk.main()
     sys.exit(0)

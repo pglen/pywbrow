@@ -98,13 +98,14 @@ class MainWin(Gtk.Window):
         except GLib.GError as msg:
             print("Building menus failed: %s" % msg)
 
+
+        bbox = Gtk.VBox()
         self.mbar = merge.get_widget("/MenuBar")
         self.mbar.show()
 
         self.tbar = merge.get_widget("/ToolBar");
         self.tbar.show()
-
-        bbox = Gtk.VBox()
+        self.brow_win = browsewin.brow_win()
         bbox.pack_start(self.mbar, 0,0, 0)
         bbox.pack_start(self.tbar, 0,0, 0)
 
@@ -203,11 +204,17 @@ class MainWin(Gtk.Window):
         #dialog.connect ("response", lambda d, r: d.destroy())
         #dialog.show()
 
-        warnings.simplefilter("ignore")
+        #warnings.simplefilter("ignore")
         strx = action.get_name()
-        warnings.simplefilter("default")
+        #warnings.simplefilter("default")
 
-        print ("activate_action", strx)
+        print ("activate_action:", strx)
+
+        if str == "Copy":
+            print("copy")
+
+        if str == "Save":
+            print("save")
 
     def activate_quit(self, action):
         print( "activate_quit called")
