@@ -26,15 +26,6 @@ from gi.repository import Pango
 
 import browsewin
 
-#try:
-#    import pgwkit
-#except:
-#    print("Please install WebKit2")
-#    sys.exit(1)
-#
-#def func():
-#    pass
-#
 # ------------------------------------------------------------------------
 
 class MainWin(Gtk.Window):
