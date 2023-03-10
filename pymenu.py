@@ -340,13 +340,13 @@ def create_action_group(self):
     );
 
     # GtkToggleActionEntry
-    toggle_entries = (
-      ( "Bold", Gtk.STOCK_BOLD,                    # name, stock id
-         "_Bold", "<control>B",                    # label, accelerator
-        "Bold",                                    # tooltip
-        self.activate_action,
-        True ),                                    # is_active
-    )
+    #toggle_entries = (
+    #  ( "Bold", Gtk.STOCK_BOLD,                    # name, stock id
+    #     "_Bold", "<control>B",                    # label, accelerator
+    #    "Bold",                                    # tooltip
+    #    self.activate_action,
+    #    True ),                                    # is_active
+    #)
 
     # GtkRadioActionEntry
     color_entries = (

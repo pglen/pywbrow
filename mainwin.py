@@ -89,14 +89,12 @@ class MainWin(Gtk.Window):
         except GLib.GError as msg:
             print("Building menus failed: %s" % msg)
 
-
         bbox = Gtk.VBox()
         self.mbar = merge.get_widget("/MenuBar")
         self.mbar.show()
 
         self.tbar = merge.get_widget("/ToolBar");
         self.tbar.show()
-        self.brow_win = browsewin.brow_win()
         bbox.pack_start(self.mbar, 0,0, 0)
         bbox.pack_start(self.tbar, 0,0, 0)
 
@@ -110,8 +108,6 @@ class MainWin(Gtk.Window):
 
         self.brow_win = browsewin.brow_win()
         self.brow_win.fname = os.path.dirname(__file__) + os.sep + "home.html"
-
-        #self.brow_win = htmledit.HtmlEditor()
 
         #webview.load_uri("https://google.com")
         #self.brow_win.webview.load_uri("file://" + self.fname)
@@ -169,8 +165,6 @@ class MainWin(Gtk.Window):
         #        except:
         #             ppp = "No Prop"
         #        print(aa, "=", ppp)
-
-        #print(settings.get_properties())
 
     def  OnExit(self, arg, srg2 = None):
         self.exit_all()
