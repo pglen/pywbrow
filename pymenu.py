@@ -95,10 +95,11 @@ rclick_menu2 = (
 
 def create_action_group(self):
     # GtkActionEntry
-    if sys.version_info[0] < 3:
-        verx = "_Help2"
-    else:
-        verx = "_Help3"
+    #if sys.version_info[0] < 3:
+    #    verx = "_Help2"
+    #else:
+    #    verx = "_Help3"
+    verx = "_Help"
 
     entries = (
       ( "FileMenu", None, "_File" ),                # name, stock id, label
@@ -166,20 +167,20 @@ def create_action_group(self):
       ( "Exit", Gtk.STOCK_CLOSE,
         "_Exit", "<alt>X",
         "Exit program, save files",
-         self.activate_exit ),
+         self.activate_action ),
 
       ( "Cut", Gtk.STOCK_CUT,
-        "Cu_t   \t\tCtrl-X", "",
+        "Cu_t   \t\tCtrl-X", "<Control>x",
         "Cut selection to clipboard",
          self.activate_action ),
 
        ( "Copy", Gtk.STOCK_COPY,
-        "_Copy   \t\tCtrl-C", "",
+        "_Copy   \t\tCtrl-C", "<Control>c",
         "Copy selection to clipboard",
          self.activate_action ),
 
       ( "Paste", Gtk.STOCK_PASTE,
-        "_Paste  \t\tCtrl-V", "",
+        "_Paste  \t\tCtrl-V", "<Control>v",
         "Paste clipboard into text",
          self.activate_action ),
 

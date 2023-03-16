@@ -195,18 +195,29 @@ class MainWin(Gtk.Window):
 
         print ("activate_action:", strx)
 
-        if str == "Copy":
-            print("copy")
+        if strx == "Copy":
+            #print("copy")
+            pass
 
-        if str == "Save":
-            print("save")
+        if strx == "Open":
+            #print("open")
+            self.brow_win.open()
+            pass
+
+        if strx == "Save":
+            #print("save")
+            self.brow_win.save()
+
+        if strx == "SaveAs":
+            #print("saveas")
+            self.brow_win.saveas()
+
+        if strx == "Exit":
+            print("exit")
+            self.OnExit(False)
 
     def activate_quit(self, action):
         print( "activate_quit called")
-        self.OnExit(False)
-
-    def activate_exit(self, action):
-        print( "activate_exit called" )
         self.OnExit(False)
 
     def activate_about(self, action):

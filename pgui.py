@@ -66,14 +66,6 @@ ui_info = \
       <menuitem action='End'/>
     </menu>
 
-    <menu action='MacrosMenu'>
-      <menuitem action='Record'/>
-      <menuitem action='Play'/>
-      <menuitem action='Animate'/>
-      <separator/>
-      <menuitem action='Savemacro'/>
-      <menuitem action='Loadmacro'/>
-    </menu>
 
     <menu action='PreferencesMenu'>
         <menuitem action='Colors'/>
@@ -92,9 +84,6 @@ ui_info = \
 
     <menu action='HelpMenu'>
       <menuitem action='Help'/>
-      <menuitem action='DevHelp'/>
-      <menuitem action='KeyHelp'/>
-      <menuitem action='KeyDoc'/>
       <menuitem action='About'/>
     </menu>
 
@@ -108,9 +97,6 @@ ui_info = \
     <toolitem action='Exit'/>
     <toolitem action='Quit'/>
     <separator/>
-    <toolitem action='Copy'/>
-    <toolitem action='Cut'/>
-    <toolitem action='Paste'/>
 
 
    <toolitem action='Undo'/>
@@ -121,6 +107,24 @@ ui_info = \
 
      </toolbar>
 </ui>'''
+
+#<toolitem action='Copy'/>
+#    <toolitem action='Cut'/>
+#    <toolitem action='Paste'/>
+
+#<menu action='MacrosMenu'>
+#      <menuitem action='Record'/>
+#      <menuitem action='Play'/>
+#      <menuitem action='Animate'/>
+#      <separator/>
+#      <menuitem action='Savemacro'/>
+#      <menuitem action='Loadmacro'/>
+#    </menu>
+
+#<menuitem action='DevHelp'/>
+#      <menuitem action='KeyHelp'/>
+#      <menuitem action='KeyDoc'/>
+#
 
 '''    <toolitem action='Record'/>
     <toolitem action='Play'/>
