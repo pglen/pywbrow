@@ -193,11 +193,17 @@ class MainWin(Gtk.Window):
         strx = action.get_name()
         #warnings.simplefilter("default")
 
-        print ("activate_action:", strx)
+        #print ("activate_action:", strx)
 
         if strx == "Copy":
-            #print("copy")
+            self.brow_win.copy()
             pass
+
+        if strx == "Paste":
+            self.brow_win.paste()
+
+        if strx == "Cut":
+            self.brow_win.cut()
 
         if strx == "Open":
             #print("open")
